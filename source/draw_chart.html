@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+    <script type="text/javascript">
+
+    //Google Chartsを利用するための準備
+    google.load('visualization', '1', {'packages':['corechart']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      // jQueryの通信機能を利用し、APIからデータを取得
+      var seriesData = $.ajax({
+          url: "series_api.php",
+          dataType:"json",
+          async: false
+          }).responseJSON;
+
+      var drawData = [["date","cnt"]];
+      for (var i=0; i<seriesData.length; i++){
+        drawData.push([seriesData[i]['date'], parseInt(seriesData[i]['cnt'], 10)]);
+      }
+      console.log(drawData);
+      var drawData = new google.visualization.arrayToDataTable(drawData);
+      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+      var options = {
+                      title: 'DAU',
+                      width: 800,
+                      height: 400,
+                      hAxis: {title: '日付', format: "####"}
+                    };
+
+      chart.draw(drawData, options);
+    }
+
+    </script>
+  </head>
+
+  <body>
+    <div id="chart_div"></div>
+  </body>
+</html>
